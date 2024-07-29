@@ -51,3 +51,14 @@ a {
     line-height: 16px;
     color: #dcdcf3;
 }
+
+.common-title {
+    font-family: "Museo Sans Cyrl Bold", sans-serif;
+    font-size: 48px;
+    line-height: 58px;
+    color: #333;
+}
+
+.common-title span {
+    color: #6933dc;
+}
