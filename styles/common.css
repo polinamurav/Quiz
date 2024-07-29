@@ -44,6 +44,17 @@ a {
     background: #390d93;
 }
 
+.button-transparent {
+    background: transparent;
+    color: #6933dc;
+    border: 1px solid #6933dc;
+}
+
+.button-transparent:hover {
+    background: #6933dc;
+    color: white;
+}
+
 .footer {
     text-align: center;
     padding: 40px 0;
@@ -61,4 +72,32 @@ a {
 
 .common-title span {
     color: #6933dc;
+}
+
+input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #6933dc;
+    border-radius: 50%;
+    margin: 0 13px 0 0;
+    transform: translateY(2px);
+
+    display: grid;
+    place-content: center;
+}
+
+input[type="radio"]::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: inset 10px 10px #6933dc;
+    transition: .2s ease transform;
+    transform: scale(0);
+}
+
+input[type="radio"]:checked::before {
+    transform: scale(1);
 }
