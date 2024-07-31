@@ -50,6 +50,17 @@
 
             this.prepareProgressBar();
             this.showQuestion();
+
+            const timerElement = document.getElementById('timer');
+            let seconds = 59;
+            const interval = setInterval(function () {
+                seconds--;
+                timerElement.innerText = seconds;
+                if (seconds === 0) {
+                    clearInterval(interval);
+                    this.complete();
+                }
+            }.bind(this), 1000);
         },
         prepareProgressBar() {
             for (let i = 0; i < this.quiz.questions.length; i++) {
@@ -169,6 +180,9 @@
             })
 
             this.showQuestion();
+        },
+        complete() {
+
         }
     }
 
