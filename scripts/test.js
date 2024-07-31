@@ -33,7 +33,6 @@
             }
         },
         startQuiz() {
-            console.log(this.quiz);
             this.progressBarElement = document.getElementById('progress-bar');
             this.questionTitleElement = document.getElementById('title');
             this.optionsElement = document.getElementById('options');
@@ -158,13 +157,17 @@
                 });
             }
 
-            console.log(this.userResult);
 
 
             if (action === 'next' || action === 'pass') {
                 this.currentQuestionIndex++;
             } else {
                 this.currentQuestionIndex--;
+            }
+
+            if (this.currentQuestionIndex > this.quiz.questions.length) {
+                this.complete();
+                return;
             }
 
             Array.from(this.progressBarElement.children).forEach((item, index) => {
@@ -182,7 +185,34 @@
             this.showQuestion();
         },
         complete() {
+            const url = new URL(location.href);
+            const id = url.searchParams.get('id');
+            const name = url.searchParams.get('name');
+            const lastName = url.searchParams.get('lastName');
+            const email = url.searchParams.get('email');
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://testologia.ru/pass-quiz?id=' + id, false);
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+            xhr.send(JSON.stringify({
+                name: name,
+                lastName: lastName,
+                email: email,
+                results: this.userResult
+            }));
 
+            if (xhr.status === 200 && xhr.responseText) {
+                let result = null;
+                try {
+                    result = JSON.parse(xhr.responseText);
+                } catch (e) {
+                    location.href = 'index.html';
+                }
+                if (result) {
+                    location.href = 'result.html?score=' + result.score + '&total=' + result.total;
+                }
+            } else {
+                location.href = 'index.html';
+            }
         }
     }
 
