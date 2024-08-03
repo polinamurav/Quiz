@@ -15,16 +15,6 @@
     display: flex;
 }
 
-.test-question-title {
-    font-family: "Museo Sans Cyrl Bold", sans-serif;
-    font-size: 36px;
-    line-height: 43px;
-}
-
-.test-question-title span {
-    color: #6933dc;
-}
-
 .test-question-options {
     margin-top: 58px;
     min-height: 344px;

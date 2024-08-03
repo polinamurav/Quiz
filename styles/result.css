@@ -1,6 +1,6 @@
 .result {
     padding-top: 140px;
-    padding-bottom: 91px;
+    padding-bottom: 31px;
     text-align: center;
 }
 
@@ -35,4 +35,9 @@
     font-size: 158px;
     line-height: 190px;
     color: #fff;
+}
+
+.see-result {
+    margin-top: 80px;
+    align-self: end;
 }
