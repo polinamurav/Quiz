@@ -66,13 +66,20 @@
     margin-top: 10px;
 }
 
-.pass-question a {
+.pass-question-a {
     font-size: 17px;
     line-height: 20px;
     color: #6933dc;
     text-decoration: none;
     display: flex;
     align-items: center;
+}
+
+.disabled-link {
+    pointer-events: none;
+    color: gray;
+    text-decoration: none;
+    cursor: not-allowed;
 }
 
 .pass-question a:hover {

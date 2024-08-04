@@ -102,6 +102,8 @@
                     inputElement.setAttribute('checked', 'checked');
                 }
 
+                this.passButtonElement.classList.remove('disabled-link');
+                
                 inputElement.onchange = function () {
                     that.chooseAnswer();
                 }
@@ -133,6 +135,7 @@
         },
         chooseAnswer() {
             this.nextButtonElement.removeAttribute('disabled');
+            this.passButtonElement.classList.add('disabled-link');
         },
         move(action) {
             const activeQuestion = this.quiz.questions[this.currentQuestionIndex - 1];
