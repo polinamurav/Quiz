@@ -210,6 +210,7 @@
                 if (result) {
                     localStorage.setItem('testId', id);
                     localStorage.setItem('userAnswers', JSON.stringify(this.userResult));
+                    localStorage.setItem('userName', JSON.stringify(name + ' ' + lastName + ', ' + email));
                     location.href = 'result.html?score=' + result.score + '&total=' + result.total;
                 }
             } else {

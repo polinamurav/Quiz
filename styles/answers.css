@@ -25,6 +25,16 @@
     font-size: 54px;
 }
 
+.answers-title-name {
+    padding-top: 10px;
+    font-size: 20px;
+}
+
+.answers-title-name span {
+    font-family: "Museo Sans Cyrl Bold", sans-serif;
+    color: #6933dc;
+}
+
 .answers-question {
     margin-top: 60px;
 }
