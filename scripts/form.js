@@ -27,6 +27,10 @@
         ],
         init() {
             const that = this;
+
+            localStorage.removeItem('userAnswers');
+            localStorage.removeItem('testId');
+
             this.fields.forEach(item => {
                 item.element = document.getElementById(item.id);
                 item.element.onchange = function () {

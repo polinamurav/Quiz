@@ -40,6 +40,26 @@
     display: flex;
 }
 
+.correct {
+    color: #5fdc33;
+}
+
+.incorrect {
+    color: #dc3333;
+}
+
+input[type="radio"].correct {
+    border: 6px solid #5fdc33;
+}
+
+input[type="radio"].incorrect {
+    border: 6px solid #dc3333;
+}
+
+input[type="radio"].correct::before, input[type="radio"].incorrect::before {
+    transform: scale(0);
+}
+
 .answers-question-option label {
     cursor: pointer;
 }

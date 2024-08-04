@@ -208,6 +208,8 @@
                     location.href = 'index.html';
                 }
                 if (result) {
+                    localStorage.setItem('testId', id);
+                    localStorage.setItem('userAnswers', JSON.stringify(this.userResult));
                     location.href = 'result.html?score=' + result.score + '&total=' + result.total;
                 }
             } else {
