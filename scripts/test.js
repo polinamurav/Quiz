@@ -103,7 +103,7 @@
                 }
 
                 this.passButtonElement.classList.remove('disabled-link');
-                
+
                 inputElement.onchange = function () {
                     that.chooseAnswer();
                 }
@@ -214,6 +214,8 @@
                     localStorage.setItem('testId', id);
                     localStorage.setItem('userAnswers', JSON.stringify(this.userResult));
                     localStorage.setItem('userName', JSON.stringify(name + ' ' + lastName + ', ' + email));
+                    localStorage.setItem('score', result.score);
+                    localStorage.setItem('total', result.total);
                     location.href = 'result.html?score=' + result.score + '&total=' + result.total;
                 }
             } else {

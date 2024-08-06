@@ -59,9 +59,10 @@
             console.log(this.userAnswers);
 
             const myResultLink = document.getElementById('my-result');
-            myResultLink.click = function () {
+            myResultLink.addEventListener('click', function () {
+                // console.log(that, this);
                 that.complete();
-            }
+            })
 
             this.optionsElement = document.getElementById('options');
             this.optionsElement.innerHTML = ''; //очищаем его и удаляем все варианты ответов старые
@@ -135,7 +136,9 @@
             })
         },
         complete() {
-            location.href = 'result.html?score=' + result.score + '&total=' + result.total;
+            let score = localStorage.getItem('score');
+            let total = localStorage.getItem('total');
+            location.href = 'result.html?score=' + score + '&total=' + total;
         }
     }
 

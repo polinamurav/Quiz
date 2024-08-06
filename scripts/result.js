@@ -5,9 +5,11 @@
             const url = new URL(location.href);
             // const testId = url.searchParams.get('id');
             const testId = localStorage.getItem('testId');
+            const score = url.searchParams.get('score');
+            const total = url.searchParams.get('total');
 
-            document.getElementById('result-score').innerText = url.searchParams.get('score')
-                + '/' + url.searchParams.get('total');
+            document.getElementById('result-score').innerText = score
+                + '/' + total;
 
             const seeResultLink = document.getElementById('see-result');
             seeResultLink.onclick = function () {

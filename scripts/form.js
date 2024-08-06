@@ -30,6 +30,9 @@
 
             localStorage.removeItem('userAnswers');
             localStorage.removeItem('testId');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('score');
+            localStorage.removeItem('total');
 
             this.fields.forEach(item => {
                 item.element = document.getElementById(item.id);
