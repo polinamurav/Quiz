@@ -1,3 +1,5 @@
+import {UrlManajer} from "../utils/url-manajer.js";
+
 export class Test {
     constructor() {
         this.progressBarElement = null;
@@ -10,26 +12,26 @@ export class Test {
         this.currentQuestionIndex = 1;
         this.userResult = [];
 
-        checkUserData();
-        const url = new URL(location.href);
-        const testId = url.searchParams.get('id');
-        if (testId) {
+        this.routeParams = UrlManajer.getQueryParams();
+        UrlManajer.checkUserData(this.routeParams);
+
+        if (this.routeParams.id) {
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', 'https://testologia.ru/get-quiz?id=' + testId, false);
+            xhr.open('GET', 'https://testologia.ru/get-quiz?id=' + this.routeParams.id, false);
             xhr.send();
 
             if (xhr.status === 200 && xhr.responseText) {
                 try {
                     this.quiz = JSON.parse(xhr.responseText);
                 } catch (e) {
-                    location.href = 'index.html';
+                    location.href = '#/';
                 }
                 this.startQuiz();
             } else {
-                location.href = 'index.html';
+                location.href = '#/';
             }
         } else {
-            location.href = 'index.html';
+            location.href = '#/';
         }
     }
 
@@ -193,18 +195,13 @@ export class Test {
     }
 
     complete() {
-        const url = new URL(location.href);
-        const id = url.searchParams.get('id');
-        const name = url.searchParams.get('name');
-        const lastName = url.searchParams.get('lastName');
-        const email = url.searchParams.get('email');
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'https://testologia.ru/pass-quiz?id=' + id, false);
+        xhr.open('POST', 'https://testologia.ru/pass-quiz?id=' + this.routeParams.id, false);
         xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
         xhr.send(JSON.stringify({
-            name: name,
-            lastName: lastName,
-            email: email,
+            name: this.routeParams.name,
+            lastName: this.routeParams.lastName,
+            email: this.routeParams.email,
             results: this.userResult
         }));
 
@@ -213,18 +210,18 @@ export class Test {
             try {
                 result = JSON.parse(xhr.responseText);
             } catch (e) {
-                location.href = 'index.html';
+                location.href = '#/';
             }
             if (result) {
-                localStorage.setItem('testId', id);
+                localStorage.setItem('testId', this.routeParams.id);
                 localStorage.setItem('userAnswers', JSON.stringify(this.userResult));
-                localStorage.setItem('userName', JSON.stringify(name + ' ' + lastName + ', ' + email));
+                localStorage.setItem('userName', JSON.stringify(this.routeParams.name + ' ' + this.routeParams.lastName + ', ' + this.routeParams.email));
                 localStorage.setItem('score', result.score);
                 localStorage.setItem('total', result.total);
-                location.href = 'result.html?score=' + result.score + '&total=' + result.total;
+                location.href = '#/result?score=' + result.score + '&total=' + result.total;
             }
         } else {
-            location.href = 'index.html';
+            location.href = '#/';
         }
     }
 }

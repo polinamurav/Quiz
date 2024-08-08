@@ -19,14 +19,14 @@ export class Answers {
                     console.log(this.answer);
                     // that.checkAnswer(this);
                 } catch (e) {
-                    location.href = 'index.html';
+                    location.href = '#/';
                 }
                 this.checkAnswer();
             } else {
-                location.href = 'index.html';
+                location.href = '#/';
             }
         } else {
-            location.href = 'index.html';
+            location.href = '#/';
         }
     }
 
@@ -43,14 +43,14 @@ export class Answers {
                     this.quiz = JSON.parse(xhr.responseText);
                     console.log(this.quiz);
                 } catch (e) {
-                    location.href = 'index.html';
+                    location.href = '#/';
                 }
                 this.displayAnswer();
             } else {
-                location.href = 'index.html';
+                location.href = '#/';
             }
         } else {
-            location.href = 'index.html';
+            location.href = '#/';
         }
 
     }

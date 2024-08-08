@@ -1,11 +1,13 @@
+import {UrlManajer} from "../utils/url-manajer.js";
+
 export class Result {
     constructor() {
         let that = this;
-        const url = new URL(location.href);
+        this.routeParams = UrlManajer.getQueryParams();
         // const testId = url.searchParams.get('id');
         const testId = localStorage.getItem('testId');
-        const score = url.searchParams.get('score');
-        const total = url.searchParams.get('total');
+        const score = this.routeParams.score;
+        const total = this.routeParams.total;
 
         document.getElementById('result-score').innerText = score
             + '/' + total;
