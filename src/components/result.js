@@ -20,7 +20,7 @@ export class Result {
 
     seeResult(testId) {
         if (testId) {
-            location.href = 'answers.html?id=' + testId;
+            location.href = '#/answers?id=' + testId;
         }
     }
 }

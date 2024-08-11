@@ -1,3 +1,5 @@
+import {UrlManajer} from "../utils/url-manajer.js";
+
 export class Answers {
     constructor() {
         this.answer = null;
@@ -6,8 +8,8 @@ export class Answers {
         this.userAnswers = null;
 
         let that = this;
-        const url = new URL(location.href);
-        const testId = url.searchParams.get('id');
+        this.routeParams = UrlManajer.getQueryParams();
+        const testId = this.routeParams.id;
 
         if (testId) {
             const xhr = new XMLHttpRequest();
@@ -19,20 +21,19 @@ export class Answers {
                     console.log(this.answer);
                     // that.checkAnswer(this);
                 } catch (e) {
-                    location.href = '#/';
+                    // location.href = '#/';
                 }
                 this.checkAnswer();
             } else {
-                location.href = '#/';
+                // location.href = '#/';
             }
-        } else {
-            location.href = '#/';
         }
     }
 
     checkAnswer() {
-        const url = new URL(location.href);
-        const testId = url.searchParams.get('id');
+        this.routeParams = UrlManajer.getQueryParams();
+        const testId = this.routeParams.id;
+
         if (testId) {
             const xhr = new XMLHttpRequest();
             xhr.open('GET', 'https://testologia.ru/get-quiz?id=' + testId, false);
@@ -47,10 +48,10 @@ export class Answers {
                 }
                 this.displayAnswer();
             } else {
-                location.href = '#/';
+                // location.href = '#/';
             }
         } else {
-            location.href = '#/';
+            // location.href = '#/';
         }
 
     }
@@ -141,6 +142,6 @@ export class Answers {
     complete() {
         let score = localStorage.getItem('score');
         let total = localStorage.getItem('total');
-        location.href = 'result.html?score=' + score + '&total=' + total;
+        location.href = '#/result?score=' + score + '&total=' + total;
     }
 }
