@@ -1,5 +1,6 @@
 import {UrlManajer} from "../utils/url-manajer.js";
-import {CustonHttp} from "../services/custon-http.js";
+import {CustomHttp} from "../services/custom-http.js";
+import config from "../../config/config.js";
 
 export class Choice {
 
@@ -12,7 +13,7 @@ export class Choice {
 
     async init() {
         try {
-            const result = await CustonHttp.request('http://localhost:3000/api/tests');
+            const result = await CustomHttp.request(config.host + '/tests');
 
             if (result) {
                 if (result.error) {
@@ -21,6 +22,8 @@ export class Choice {
 
                 this.quizzes = result;
                 this.processQuizzes();
+            } else {
+                location.href = '#/';
             }
         } catch (error) {
             console.log(error);
