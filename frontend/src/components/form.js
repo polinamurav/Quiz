@@ -1,4 +1,5 @@
 import {CustonHttp} from "../services/custon-http.js";
+import {Auth} from "../services/auth.js";
 
 export class Form {
 
@@ -114,7 +115,24 @@ export class Form {
                 }
 
             } else {
+                try {
+                    const result = await CustonHttp.request('http://localhost:3000/api/login', 'POST', {
+                        email: this.fields.find(item => item.name === 'email').element.value,
+                        password: this.fields.find(item => item.name === 'password').element.value,
+                    });
 
+                    if (result) {
+                        if (result.error || !result.accessToken || !result.refreshToken
+                            || !result.fullName || !result.userId) {
+                            throw new Error(result.message);
+                        }
+
+                        Auth.setTokens(result.accessToken, result.refreshToken);
+                        location.href = '#/choice';
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
             }
 
 

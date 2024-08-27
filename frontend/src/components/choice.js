@@ -1,5 +1,5 @@
 import {UrlManajer} from "../utils/url-manajer.js";
-import {CustonHttp} from "../services/custon-http";
+import {CustonHttp} from "../services/custon-http.js";
 
 export class Choice {
 
@@ -7,19 +7,23 @@ export class Choice {
         this.quizzes = [];
         this.routeParams = UrlManajer.getQueryParams();
 
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', 'https://testologia.ru/get-quizzes', false);
-        xhr.send();
+        this.init();
+    }
 
-        if (xhr.status === 200 && xhr.responseText) {
-            try {
-                this.quizzes = JSON.parse(xhr.responseText);
-            } catch (e) {
-                location.href = '#/';
+    async init() {
+        try {
+            const result = await CustonHttp.request('http://localhost:3000/api/tests');
+
+            if (result) {
+                if (result.error) {
+                    throw new Error(result.error);
+                }
+
+                this.quizzes = result;
+                this.processQuizzes();
             }
-            this.processQuizzes();
-        } else {
-            location.href = '#/';
+        } catch (error) {
+            console.log(error);
         }
     }
 

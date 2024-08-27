@@ -1,3 +1,5 @@
+import {Auth} from "./auth.js";
+
 export class CustonHttp {
     static async request(url, method = 'GET', body = null) {
 
@@ -8,6 +10,11 @@ export class CustonHttp {
                 'Accept': 'application/json',
             }
         };
+
+        let token = localStorage.getItem(Auth.accessTokenKey);
+        if (token) {
+            params.headers['x-access-token'] = token;
+        }
 
         if (body) {
             params.body = JSON.stringify(body);
