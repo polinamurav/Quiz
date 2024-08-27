@@ -1,31 +1,43 @@
 export class Form {
 
-    constructor() {
+    constructor(page) {
         this.agreeElement = null;
         this.processElement = null;
+        this.page = page;
+
         this.fields = [
-            {
-                name: 'name',
-                id: 'name',
-                element: null,
-                regex: /^[А-Я][а-я]+\s*$/,
-                valid: false,
-            },
-            {
-                name: 'lastName',
-                id: 'last-name',
-                element: null,
-                regex: /^[А-Я][а-я]+\s*$/,
-                valid: false,
-            },
             {
                 name: 'email',
                 id: 'email',
                 element: null,
                 regex: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
                 valid: false,
+            },
+            {
+                name: 'password',
+                id: 'password',
+                element: null,
+                regex: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
+                valid: false,
             }
         ];
+
+        if (this.page === 'signup') {
+            this.fields.unshift({  // чтобы два поля добавились в начало
+                    name: 'name',
+                    id: 'name',
+                    element: null,
+                    regex: /^[А-Я][а-я]+\s*$/,
+                    valid: false,
+                },
+                {
+                    name: 'lastName',
+                    id: 'last-name',
+                    element: null,
+                    regex: /^[А-Я][а-я]+\s*$/,
+                    valid: false,
+                });
+        }
 
         const that = this;
 
@@ -47,10 +59,11 @@ export class Form {
             that.processForm();
         }
 
-
-        this.agreeElement = document.getElementById('agree');
-        this.agreeElement.onchange = function () {
-            that.validateForm();
+        if (this.page === 'signup') {
+            this.agreeElement = document.getElementById('agree');
+            this.agreeElement.onchange = function () {
+                that.validateForm();
+            }
         }
     }
 
@@ -67,7 +80,7 @@ export class Form {
 
     validateForm() {
         const validForm = this.fields.every(item => item.valid);
-        const isValid = this.agreeElement.checked && validForm;
+        const isValid = this.agreeElement ? this.agreeElement.checked && validForm : validForm; //иначе для страницы с логином
         if (isValid) {
             this.processElement.removeAttribute('disabled');
         } else {
@@ -76,15 +89,45 @@ export class Form {
         return isValid;
     }
 
-    processForm() {
+    async processForm() {
         if (this.validateForm()) {
+            if (this.page === 'signup') {
+                try {
+                    const response = await fetch('http://localhost:3000/api/signup', {
+                        method: "POST",
+                        headers: {
+                            'Content-type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: this.fields.find(item => item.name === 'name').element.value,
+                            lastName: this.fields.find(item => item.name === 'lastName').element.value,
+                            email: this.fields.find(item => item.name === 'email').element.value,
+                            password: this.fields.find(item => item.name === 'password').element.value,
+                        })
+                    })
 
-            let paramString = '';
-            this.fields.forEach(item => {
-                paramString += (!paramString ? '?' : '&') + item.name + '=' + item.element.value;
-            })
+                    if (response.status < 200 || response.status >= 300) {
+                        throw new Error(response.message);
+                    }
 
-            location.href = '#/choice' + paramString;
+                    const result = await response.json();
+                    if (result) {
+                        if (result.error || !result.user) {
+                            throw new Error(result.message);
+                        }
+
+                        location.href = '#/choice';
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+
+            } else {
+
+            }
+
+
         }
     }
 }
