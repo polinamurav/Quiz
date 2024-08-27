@@ -1,11 +1,11 @@
 import {UrlManajer} from "../utils/url-manajer.js";
+import {CustonHttp} from "../services/custon-http";
 
 export class Choice {
 
     constructor() {
         this.quizzes = [];
         this.routeParams = UrlManajer.getQueryParams();
-        UrlManajer.checkUserData(this.routeParams);
 
         const xhr = new XMLHttpRequest();
         xhr.open('GET', 'https://testologia.ru/get-quizzes', false);
