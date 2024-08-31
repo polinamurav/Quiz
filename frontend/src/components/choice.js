@@ -22,8 +22,6 @@ export class Choice {
 
                 this.quizzes = result;
                 this.processQuizzes();
-            } else {
-                location.href = '#/';
             }
         } catch (error) {
             console.log(error);
