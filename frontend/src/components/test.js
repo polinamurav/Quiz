@@ -1,4 +1,7 @@
 import {UrlManajer} from "../utils/url-manajer.js";
+import {CustomHttp} from "../services/custom-http.js";
+import config from "../../config/config.js";
+import {Auth} from "../services/auth.js";
 
 export class Test {
     constructor() {
@@ -13,25 +16,26 @@ export class Test {
         this.userResult = [];
 
         this.routeParams = UrlManajer.getQueryParams();
-        UrlManajer.checkUserData(this.routeParams);
 
+        this.init();
+    }
+
+    async init() {
         if (this.routeParams.id) {
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', 'https://testologia.ru/get-quiz?id=' + this.routeParams.id, false);
-            xhr.send();
+            try {
+                const result = await CustomHttp.request(config.host + '/tests/' + this.routeParams.id);
 
-            if (xhr.status === 200 && xhr.responseText) {
-                try {
-                    this.quiz = JSON.parse(xhr.responseText);
-                } catch (e) {
-                    location.href = '#/';
+                if (result) {
+                    if (result.error) {
+                        throw new Error(result.error);
+                    }
+
+                    this.quiz = result;
+                    this.startQuiz();
                 }
-                this.startQuiz();
-            } else {
-                location.href = '#/';
+            } catch (error) {
+                console.log(error);
             }
-        } else {
-            location.href = '#/';
         }
     }
 
@@ -194,34 +198,27 @@ export class Test {
         this.showQuestion();
     }
 
-    complete() {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', 'https://testologia.ru/pass-quiz?id=' + this.routeParams.id, false);
-        xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-        xhr.send(JSON.stringify({
-            name: this.routeParams.name,
-            lastName: this.routeParams.lastName,
-            email: this.routeParams.email,
-            results: this.userResult
-        }));
-
-        if (xhr.status === 200 && xhr.responseText) {
-            let result = null;
-            try {
-                result = JSON.parse(xhr.responseText);
-            } catch (e) {
-                location.href = '#/';
-            }
-            if (result) {
-                localStorage.setItem('testId', this.routeParams.id);
-                localStorage.setItem('userAnswers', JSON.stringify(this.userResult));
-                localStorage.setItem('userName', JSON.stringify(this.routeParams.name + ' ' + this.routeParams.lastName + ', ' + this.routeParams.email));
-                localStorage.setItem('score', result.score);
-                localStorage.setItem('total', result.total);
-                location.href = '#/result?score=' + result.score + '&total=' + result.total;
-            }
-        } else {
+    async complete() {
+        const userInfo = Auth.getUserInfo();
+        if (!userInfo) {
             location.href = '#/';
+        }
+
+        try {
+            const result = await CustomHttp.request(config.host + '/tests/' + this.routeParams.id + '/pass', 'POST', {
+                userId: userInfo.userId,
+                results: this.userResult
+            });
+
+            if (result) {
+                if (result.error) {
+                    throw new Error(result.error);
+                }
+
+                location.href = '#/result?id=' + this.routeParams.id;
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
 }
