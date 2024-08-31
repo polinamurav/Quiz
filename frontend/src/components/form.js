@@ -9,6 +9,12 @@ export class Form {
         this.processElement = null;
         this.page = page;
 
+        const accessToken = localStorage.getItem(Auth.accessTokenKey);
+        if (accessToken) {
+            location.href = '#/choice';
+            return;
+        }
+
         this.fields = [
             {
                 name: 'email',

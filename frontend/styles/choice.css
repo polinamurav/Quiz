@@ -81,3 +81,21 @@ input[type="radio"]::before {
 input[type="radio"]:checked::before {
     transform: scale(1);
 }
+
+.choice-option-result {
+    position: absolute;
+    z-index: 2;
+    right: 18px;
+    top: 16px;
+    border: 1px solid #6933DC;
+    padding: 5px;
+    font-size: 12px;
+    line-height: 14px;
+    color: #6933DC;
+    background: white;
+    text-align: center;
+}
+
+.choice-option-result div:first-child {
+    margin-bottom: 3px;
+}
