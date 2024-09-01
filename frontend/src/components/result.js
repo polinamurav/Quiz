@@ -7,17 +7,17 @@ export class Result {
     constructor() {
         let that = this;
         this.routeParams = UrlManajer.getQueryParams();
-        // const testId = url.searchParams.get('id');
-        const testId = localStorage.getItem('testId');
+        const testId = this.routeParams.id;
+        // const testId = localStorage.getItem('testId');
         const score = this.routeParams.score;
         const total = this.routeParams.total;
+
+        this.init();
 
         const seeResultLink = document.getElementById('see-result');
         seeResultLink.onclick = function () {
             that.seeResult(testId);
         }
-
-        this.init();
     }
 
     async init() {

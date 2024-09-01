@@ -52,10 +52,6 @@ export class Form {
         const that = this;
 
         localStorage.removeItem('userAnswers');
-        localStorage.removeItem('testId');
-        localStorage.removeItem('userName');
-        localStorage.removeItem('score');
-        localStorage.removeItem('total');
 
         this.fields.forEach(item => {
             item.element = document.getElementById(item.id);
@@ -106,6 +102,7 @@ export class Form {
 
             if (this.page === 'signup') {
                 try {
+                    localStorage.removeItem('userEmail');
                     const result = await CustomHttp.request(config.host + '/signup', 'POST', {
                         name: this.fields.find(item => item.name === 'name').element.value,
                         lastName: this.fields.find(item => item.name === 'lastName').element.value,
@@ -117,6 +114,7 @@ export class Form {
                         if (result.error || !result.user) {
                             throw new Error(result.message);
                         }
+                        localStorage.setItem('userEmail', email);
                     }
                 } catch (error) {
                     return console.log(error);
@@ -138,7 +136,8 @@ export class Form {
                     Auth.setTokens(result.accessToken, result.refreshToken);
                     Auth.setUserInfo({
                         fullName: result.fullName,
-                        userId: result.userId
+                        userId: result.userId,
+                        email: result.email
                     })
                     location.href = '#/choice';
                 }

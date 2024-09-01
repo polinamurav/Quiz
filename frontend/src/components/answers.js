@@ -1,4 +1,7 @@
 import {UrlManajer} from "../utils/url-manajer.js";
+import {Auth} from "../services/auth.js";
+import {CustomHttp} from "../services/custom-http.js";
+import config from "../../config/config.js";
 
 export class Answers {
     constructor() {
@@ -9,51 +12,35 @@ export class Answers {
 
         let that = this;
         this.routeParams = UrlManajer.getQueryParams();
-        const testId = this.routeParams.id;
 
-        if (testId) {
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', 'https://testologia.ru/get-quiz-right?id=' + testId, false);
-            xhr.send();
-            if (xhr.status === 200 && xhr.responseText) {
-                try {
-                    this.answer = JSON.parse(xhr.responseText);
-                    console.log(this.answer);
-                    // that.checkAnswer(this);
-                } catch (e) {
-                    // location.href = '#/';
-                }
-                this.checkAnswer();
-            } else {
-                // location.href = '#/';
-            }
-        }
+        this.init();
     }
 
-    checkAnswer() {
-        this.routeParams = UrlManajer.getQueryParams();
-        const testId = this.routeParams.id;
-
-        if (testId) {
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', 'https://testologia.ru/get-quiz?id=' + testId, false);
-            xhr.send();
-
-            if (xhr.status === 200 && xhr.responseText) {
-                try {
-                    this.quiz = JSON.parse(xhr.responseText);
-                    console.log(this.quiz);
-                } catch (e) {
-                    location.href = '#/';
-                }
-                this.displayAnswer();
-            } else {
-                // location.href = '#/';
-            }
-        } else {
-            // location.href = '#/';
+    async init() {
+        const userInfo = Auth.getUserInfo();
+        if (!userInfo) {
+            location.href = '#/';
         }
 
+        if (this.routeParams.id) {
+            try {
+                const result = await CustomHttp.request(config.host + '/tests/' + this.routeParams.id + '/result/details/?userId=' + userInfo.userId);
+
+                if (result) {
+                    if (result.error) {
+                        throw new Error(result.error);
+                    }
+                    // this.answer = result.correctAnswers;
+                    // this.quiz = result;
+                    this.quiz = result.test;
+                    this.displayAnswer();
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            location.href = '#/';
+        }
     }
 
     displayAnswer() {
@@ -72,8 +59,11 @@ export class Answers {
 
         document.getElementById('answer-pre-title').innerText = this.quiz.name;
 
-        const nameUser = JSON.parse(localStorage.getItem('userName'));
-        document.getElementById('answers-title-name').innerText = nameUser;
+        const userInfo = Auth.getUserInfo();
+        const userEmail = localStorage.getItem('userEmail');
+        if (userInfo) {
+            document.getElementById('answers-title-name').innerText = `${userInfo.fullName}, ${userEmail}`;
+        }
 
         this.quiz.questions.forEach((question, index) => {
             const questionElement = document.createElement('div');
@@ -91,57 +81,52 @@ export class Answers {
             const userAnswer = this.userAnswers.find(user => user.questionId === question.id);
 
             question.answers.forEach(answer => {
-                const optionElement = document.createElement('div');
-                optionElement.className = 'answers-question-option';
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'answers-question-option';
 
-                const inputElement = document.createElement('input');
-                inputElement.setAttribute('id', 'answer-' + answer.id);
-                inputElement.setAttribute('type', 'radio');
-                inputElement.setAttribute('name', 'answer');
-                inputElement.setAttribute('disabled', 'disabled');
+                    const inputElement = document.createElement('input');
+                    inputElement.setAttribute('id', 'answer-' + answer.id);
+                    inputElement.setAttribute('type', 'radio');
+                    inputElement.setAttribute('name', 'answer');
+                    inputElement.setAttribute('disabled', 'disabled');
 
-                if (userAnswer && userAnswer.chosenAnswerId === answer.id) {
-                    inputElement.checked = true;
-                    if (this.answer.includes(answer.id)) {
-                        optionElement.classList.add('correct');
-                        inputElement.classList.add('correct');
+                    if (answer.correct) {
+                        if (userAnswer && userAnswer.chosenAnswerId === answer.id) {
+                            //если выбрали правильный ответ
+                            optionElement.classList.add('correct');
+                            inputElement.classList.add('correct');
+                        } else {
+                            optionElement.classList.add('correct');
+                            inputElement.classList.add('correct');
+                        }
                     } else {
-                        optionElement.classList.add('incorrect');
-                        inputElement.classList.add('incorrect');
+                        if (userAnswer && userAnswer.chosenAnswerId === answer.id) {
+                            optionElement.classList.add('incorrect');
+                            inputElement.classList.add('incorrect');
+                        }
                     }
+
+                    const labelElement = document.createElement('label');
+                    labelElement.setAttribute('for', 'answer-' + answer.id);
+                    labelElement.innerText = answer.answer;
+
+                    optionElement.appendChild(inputElement);
+                    optionElement.appendChild(labelElement);
+                    optionsElement.appendChild(optionElement);
                 }
-                // if (this.answer.includes(answer.id)) {
-                //     inputElement.checked = true;
-                //     optionElement.classList.add('correct');
-                //     inputElement.classList.add('correct');
-                // }
-
-
-                // this.userAnswers.forEach(user => {
-                //     if (user.chosenAnswerId === answer.id) {
-                //         inputElement.checked = true;
-                //         optionElement.classList.add('incorrect');
-                //         inputElement.classList.add('incorrect');
-                //     }
-                // })
-
-                const labelElement = document.createElement('label');
-                labelElement.setAttribute('for', 'answer-' + answer.id);
-                labelElement.innerText = answer.answer;
-
-                optionElement.appendChild(inputElement);
-                optionElement.appendChild(labelElement);
-                optionsElement.appendChild(optionElement);
-            })
+            )
             questionElement.appendChild(questionTitleElement);
             questionElement.appendChild(optionsElement);
             this.optionsElement.appendChild(questionElement);
         })
     }
 
-    complete() {
-        let score = localStorage.getItem('score');
-        let total = localStorage.getItem('total');
-        location.href = '#/result?score=' + score + '&total=' + total;
+    async complete() {
+        const userInfo = Auth.getUserInfo();
+        if (!userInfo) {
+            location.href = '#/';
+        }
+
+        location.href = '#/result?id=' + this.routeParams.id;
     }
 }

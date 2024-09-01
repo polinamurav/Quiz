@@ -216,10 +216,15 @@ export class Test {
                     throw new Error(result.error);
                 }
 
+                localStorage.setItem('userAnswers', JSON.stringify(this.userResult));
+                localStorage.setItem('score', result.score);
+                localStorage.setItem('total', result.total);
                 location.href = '#/result?id=' + this.routeParams.id;
             }
         } catch (error) {
             console.log(error);
         }
     }
+
+
 }
